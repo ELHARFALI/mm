@@ -6,8 +6,10 @@ const AppContext = createContext()
 
 export const AppProvider = ({ children }) => {
     const [meals, setMeals] = useState([])
+    const [categories, setCategories] = useState([])
 
-    const fetchAllMeals = async () => {
+    // get all meals
+    const fetchMeals = async () => {
         try {
             const response = await axios.get('https://www.themealdb.com/api/json/v1/1/search.php?s=')
             const meals = response.data.meals;
@@ -17,15 +19,26 @@ export const AppProvider = ({ children }) => {
         }
     }
 
-    console.log(meals);
-    
+    // get all categories
+    const fetchCategories = async () => {
+        try {
+            const response = await axios.get('https://www.themealdb.com/api/json/v1/1/categories.php');
+            const categories = response.data.categories;
+            setCategories(categories)
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    console.log(categories);
 
     useEffect(() => {
-        fetchAllMeals()
+        fetchMeals()
+        fetchCategories()
     }, [])
 
     return (
-        <AppContext.Provider value={{meals}}>
+        <AppContext.Provider value={{meals, categories}}>
             {children}
         </AppContext.Provider>
     )
